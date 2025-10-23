@@ -72,7 +72,7 @@ export function Header() {
               Consulting Services
             </Link>
             <Button asChild size="sm" className="ml-4" style={{ backgroundColor: "#C89333", color: "white" }}>
-              <Link href="/admin/login">Admin Login</Link>
+              <Link href="/admin/login">Sign In</Link>
             </Button>
           </nav>
 
@@ -129,7 +129,7 @@ export function Header() {
                 Consulting Services
               </Link>
               <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
-                <Link href="/admin/login">Admin Login</Link>
+                <Link href="/admin/login">Sign In</Link>
               </Button>
             </div>
           </nav>
