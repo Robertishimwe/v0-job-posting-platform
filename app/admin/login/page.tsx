@@ -31,11 +31,16 @@ export default function AdminLoginPage() {
       })
       if (signInError) throw signInError
 
-      // Check if user is an admin
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) throw new Error("Authentication failed")
+
       const { data: adminData, error: adminError } = await supabase
         .from("admin_users")
         .select("*")
-        .eq("email", email)
+        .eq("id", user.id)
         .single()
 
       if (adminError || !adminData) {
@@ -44,6 +49,7 @@ export default function AdminLoginPage() {
       }
 
       router.push("/admin/dashboard")
+      router.refresh()
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {

@@ -49,6 +49,13 @@ export function Header() {
               How It Works
             </Link>
             <Link
+              href="/track-application"
+              className="text-sm font-medium transition-colors hover:text-[#C89333]"
+              style={{ color: "#1A0D66" }}
+            >
+              Track Application
+            </Link>
+            <Link
               href="/#companies"
               className="text-sm font-medium transition-colors hover:text-[#C89333]"
               style={{ color: "#1A0D66" }}
@@ -94,6 +101,14 @@ export function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 How It Works
+              </Link>
+              <Link
+                href="/track-application"
+                className="text-sm font-medium transition-colors hover:text-[#C89333]"
+                style={{ color: "#1A0D66" }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Track Application
               </Link>
               <Link
                 href="/#companies"
