@@ -3,11 +3,32 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
-import { useState } from "react"
+import { Menu, User } from "lucide-react"
+import { useState, useEffect } from "react"
+import { createClient } from "@/lib/supabase/client"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isSignedIn, setIsSignedIn] = useState(false)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setIsSignedIn(!!user)
+    }
+    checkAuth()
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsSignedIn(!!session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
@@ -71,9 +92,18 @@ export function Header() {
             >
               Consulting Services
             </Link>
-            <Button asChild size="sm" className="ml-4" style={{ backgroundColor: "#C89333", color: "white" }}>
-              <Link href="/admin/login">Sign In</Link>
-            </Button>
+            {isSignedIn ? (
+              <Button asChild size="sm" className="ml-4" style={{ backgroundColor: "#C89333", color: "white" }}>
+                <Link href="/admin/dashboard">
+                  <User className="mr-2 h-4 w-4" />
+                  My Account
+                </Link>
+              </Button>
+            ) : (
+              <Button asChild size="sm" className="ml-4" style={{ backgroundColor: "#C89333", color: "white" }}>
+                <Link href="/admin/login">Sign In</Link>
+              </Button>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -128,9 +158,18 @@ export function Header() {
               >
                 Consulting Services
               </Link>
-              <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
-                <Link href="/admin/login">Sign In</Link>
-              </Button>
+              {isSignedIn ? (
+                <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
+                  <Link href="/admin/dashboard">
+                    <User className="mr-2 h-4 w-4" />
+                    My Account
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
+                  <Link href="/admin/login">Sign In</Link>
+                </Button>
+              )}
             </div>
           </nav>
         )}

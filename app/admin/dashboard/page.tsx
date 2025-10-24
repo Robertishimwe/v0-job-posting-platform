@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { AdminHeader } from "@/components/admin-header"
 import { DashboardStats } from "@/components/dashboard-stats"
 import { ApplicationsTable } from "@/components/applications-table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { JobsManagementTable } from "@/components/jobs-management-table"
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -36,6 +38,8 @@ export default async function AdminDashboardPage() {
     `,
     )
     .order("applied_at", { ascending: false })
+
+  const { data: jobs } = await supabase.from("jobs").select("*").order("created_at", { ascending: false })
 
   // Fetch stats
   const { count: totalApplications } = await supabase.from("applications").select("*", { count: "exact", head: true })
@@ -74,7 +78,18 @@ export default async function AdminDashboardPage() {
         />
 
         <div className="mt-8">
-          <ApplicationsTable applications={applications || []} />
+          <Tabs defaultValue="applications" className="w-full">
+            <TabsList className="grid w-full max-w-md grid-cols-2">
+              <TabsTrigger value="applications">Applications</TabsTrigger>
+              <TabsTrigger value="jobs">Jobs</TabsTrigger>
+            </TabsList>
+            <TabsContent value="applications" className="mt-6">
+              <ApplicationsTable applications={applications || []} />
+            </TabsContent>
+            <TabsContent value="jobs" className="mt-6">
+              <JobsManagementTable jobs={jobs || []} />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>
