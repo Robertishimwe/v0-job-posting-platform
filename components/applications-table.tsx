@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Eye, Mail, Phone } from "lucide-react"
+import { Eye, Mail, Phone, FileText, Download } from "lucide-react"
 import type { ApplicationWithJob } from "@/lib/types"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
@@ -171,6 +171,24 @@ export function ApplicationsTable({ applications: initialApplications }: Applica
                     </div>
                   </div>
                 </div>
+
+                {selectedApplication.resume_url && (
+                  <div>
+                    <h3 className="font-semibold mb-2" style={{ color: "#1A0D66" }}>
+                      Resume
+                    </h3>
+                    <a
+                      href={selectedApplication.resume_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <FileText className="h-4 w-4" style={{ color: "#C89333" }} />
+                      <span className="text-sm">View Resume</span>
+                      <Download className="h-4 w-4" />
+                    </a>
+                  </div>
+                )}
 
                 {selectedApplication.cover_letter && (
                   <div>

@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, Upload, FileText, X } from "lucide-react"
 
 interface ApplicationFormProps {
   jobId: string
@@ -21,9 +21,59 @@ export function ApplicationForm({ jobId, jobTitle }: ApplicationFormProps) {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [coverLetter, setCoverLetter] = useState("")
+  const [resumeFile, setResumeFile] = useState<File | null>(null)
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null)
+  const [isUploadingResume, setIsUploadingResume] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const handleResumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.type !== "application/pdf") {
+      setError("Only PDF files are allowed for resumes")
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Resume file size must be less than 5MB")
+      return
+    }
+
+    setResumeFile(file)
+    setError(null)
+
+    setIsUploadingResume(true)
+    try {
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const response = await fetch("/api/upload-resume", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "Failed to upload resume")
+      }
+
+      const data = await response.json()
+      setResumeUrl(data.url)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to upload resume")
+      setResumeFile(null)
+    } finally {
+      setIsUploadingResume(false)
+    }
+  }
+
+  const removeResume = () => {
+    setResumeFile(null)
+    setResumeUrl(null)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,6 +89,7 @@ export function ApplicationForm({ jobId, jobTitle }: ApplicationFormProps) {
         email,
         phone,
         cover_letter: coverLetter || null,
+        resume_url: resumeUrl,
         status: "pending",
       })
 
@@ -126,12 +177,42 @@ export function ApplicationForm({ jobId, jobTitle }: ApplicationFormProps) {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="resume">Resume (PDF) *</Label>
+            <div className="space-y-2">
+              {!resumeFile ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="resume"
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleResumeChange}
+                    disabled={isUploadingResume}
+                    required
+                    className="cursor-pointer"
+                  />
+                  <Upload className="h-4 w-4 text-muted-foreground" />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted">
+                  <FileText className="h-5 w-5" style={{ color: "#C89333" }} />
+                  <span className="text-sm flex-1 truncate">{resumeFile.name}</span>
+                  <Button type="button" variant="ghost" size="sm" onClick={removeResume} disabled={isUploadingResume}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              {isUploadingResume && <p className="text-xs text-muted-foreground">Uploading resume...</p>}
+              <p className="text-xs text-muted-foreground">Upload your resume in PDF format (max 5MB)</p>
+            </div>
+          </div>
+
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button
             type="submit"
             className="w-full"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isUploadingResume || !resumeUrl}
             style={{ backgroundColor: "#C89333", color: "white" }}
           >
             {isSubmitting ? "Submitting..." : "Submit Application"}
