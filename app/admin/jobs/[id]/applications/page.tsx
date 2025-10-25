@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
-export default async function JobApplicationsPage({ params }: { params: { id: string } }) {
+export default async function JobApplicationsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
 
   const {
@@ -23,7 +24,7 @@ export default async function JobApplicationsPage({ params }: { params: { id: st
     redirect("/admin/login")
   }
 
-  const { data: job } = await supabase.from("jobs").select("*").eq("id", params.id).single()
+  const { data: job } = await supabase.from("jobs").select("*").eq("id", id).single()
 
   if (!job) {
     notFound()
@@ -41,7 +42,7 @@ export default async function JobApplicationsPage({ params }: { params: { id: st
       )
     `,
     )
-    .eq("job_id", params.id)
+    .eq("job_id", id)
     .order("applied_at", { ascending: false })
 
   return (
