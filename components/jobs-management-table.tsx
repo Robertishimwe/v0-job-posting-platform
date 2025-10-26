@@ -1,12 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import type { Job } from "@/lib/types"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Plus, Pencil, Trash2, Eye, Download, Power } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { Plus, Pencil, Trash2, Eye, Download, Power, Search } from "lucide-react"
 import { JobForm } from "@/components/job-form"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -21,8 +31,48 @@ export function JobsManagementTable({ jobs }: JobsManagementTableProps) {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [isToggling, setIsToggling] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [sortBy, setSortBy] = useState("date-desc")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   const router = useRouter()
   const supabase = createClient()
+
+  // Filter and sort jobs
+  const filteredAndSortedJobs = useMemo(() => {
+    const filtered = jobs.filter((job) => {
+      const matchesSearch =
+        job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.location.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesStatus = statusFilter === "all" || job.status === statusFilter
+
+      return matchesSearch && matchesStatus
+    })
+
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "date-desc":
+          return new Date(b.posted_date).getTime() - new Date(a.posted_date).getTime()
+        case "date-asc":
+          return new Date(a.posted_date).getTime() - new Date(b.posted_date).getTime()
+        case "title-asc":
+          return a.title.localeCompare(b.title)
+        case "title-desc":
+          return b.title.localeCompare(a.title)
+        default:
+          return 0
+      }
+    })
+
+    return filtered
+  }, [jobs, searchQuery, statusFilter, sortBy])
+
+  // Pagination
+  const totalPages = Math.ceil(filteredAndSortedJobs.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedJobs = filteredAndSortedJobs.slice(startIndex, startIndex + itemsPerPage)
 
   const handleDelete = async (jobId: string) => {
     if (!confirm("Are you sure you want to delete this job? This action cannot be undone.")) return
@@ -55,7 +105,7 @@ export function JobsManagementTable({ jobs }: JobsManagementTableProps) {
   const handleExport = () => {
     const csvContent = [
       ["Title", "Department", "Location", "Type", "Status", "Posted Date", "Deadline"].join(","),
-      ...jobs.map((job) =>
+      ...filteredAndSortedJobs.map((job) =>
         [
           job.title,
           job.department,
@@ -115,6 +165,53 @@ export function JobsManagementTable({ jobs }: JobsManagementTableProps) {
         </div>
       </div>
 
+      {/* Search and Filters */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search jobs..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setCurrentPage(1)
+            }}
+            className="pl-10"
+          />
+        </div>
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => {
+            setStatusFilter(value)
+            setCurrentPage(1)
+          }}
+        >
+          <SelectTrigger className="w-full md:w-[180px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-full md:w-[180px]">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="date-desc">Newest First</SelectItem>
+            <SelectItem value="date-asc">Oldest First</SelectItem>
+            <SelectItem value="title-asc">Title (A-Z)</SelectItem>
+            <SelectItem value="title-desc">Title (Z-A)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="text-sm text-muted-foreground">
+        Showing {paginatedJobs.length} of {filteredAndSortedJobs.length} jobs
+      </div>
+
       <div className="rounded-lg border bg-white">
         <Table>
           <TableHeader>
@@ -129,14 +226,14 @@ export function JobsManagementTable({ jobs }: JobsManagementTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {jobs.length === 0 ? (
+            {paginatedJobs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No jobs found. Click "Add New Job" to create one.
                 </TableCell>
               </TableRow>
             ) : (
-              jobs.map((job) => (
+              paginatedJobs.map((job) => (
                 <TableRow key={job.id}>
                   <TableCell className="font-medium">{job.title}</TableCell>
                   <TableCell>{job.department}</TableCell>
@@ -184,6 +281,39 @@ export function JobsManagementTable({ jobs }: JobsManagementTableProps) {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              />
+            </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  onClick={() => setCurrentPage(page)}
+                  isActive={currentPage === page}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   )
 }

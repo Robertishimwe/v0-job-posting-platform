@@ -8,6 +8,9 @@ import { FeaturedCompanies } from "@/components/featured-companies"
 import { JobCard } from "@/components/job-card"
 import { ConsultingBanner } from "@/components/consulting-banner"
 import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -17,6 +20,7 @@ export default async function HomePage() {
     .select("*")
     .eq("status", "active")
     .order("posted_date", { ascending: false })
+    .limit(6)
 
   if (error) {
     console.error("Error fetching jobs:", error)
@@ -42,11 +46,21 @@ export default async function HomePage() {
           </div>
 
           {jobs && jobs.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {jobs.map((job: Job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {jobs.map((job: Job) => (
+                  <JobCard key={job.id} job={job} />
+                ))}
+              </div>
+              <div className="mt-12 text-center">
+                <Button asChild size="lg" style={{ backgroundColor: "#C89333", color: "white" }}>
+                  <Link href="/jobs">
+                    View All Jobs
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+              </div>
+            </>
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No open positions at the moment. Check back soon!</p>
