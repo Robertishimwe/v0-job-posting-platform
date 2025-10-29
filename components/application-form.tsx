@@ -1,8 +1,9 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
+
+import type React from "react"
+import { useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -27,6 +28,27 @@ export function ApplicationForm({ jobId, jobTitle }: ApplicationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        setUserId(user.id)
+        const { data: userData } = await supabase.auth.getUser()
+        if (userData.user?.email) {
+          setEmail(userData.user.email)
+        }
+        if (userData.user?.user_metadata?.full_name) {
+          setFullName(userData.user.user_metadata.full_name)
+        }
+      }
+    }
+    checkAuth()
+  }, [])
 
   const handleResumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -91,6 +113,7 @@ export function ApplicationForm({ jobId, jobTitle }: ApplicationFormProps) {
         cover_letter: coverLetter || null,
         resume_url: resumeUrl,
         status: "pending",
+        user_id: userId,
       })
 
       if (insertError) throw insertError

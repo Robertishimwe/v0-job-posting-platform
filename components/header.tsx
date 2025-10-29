@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client"
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isSignedIn, setIsSignedIn] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -18,13 +19,24 @@ export function Header() {
         data: { user },
       } = await supabase.auth.getUser()
       setIsSignedIn(!!user)
+
+      if (user) {
+        const { data: adminData } = await supabase.from("admin_users").select("*").eq("id", user.id).single()
+        setIsAdmin(!!adminData)
+      }
     }
     checkAuth()
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setIsSignedIn(!!session)
+      if (session?.user) {
+        const { data: adminData } = await supabase.from("admin_users").select("*").eq("id", session.user.id).single()
+        setIsAdmin(!!adminData)
+      } else {
+        setIsAdmin(false)
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -94,15 +106,20 @@ export function Header() {
             </Link>
             {isSignedIn ? (
               <Button asChild size="sm" className="ml-4" style={{ backgroundColor: "#C89333", color: "white" }}>
-                <Link href="/admin/dashboard">
+                <Link href={isAdmin ? "/admin/dashboard" : "/my-applications"}>
                   <User className="mr-2 h-4 w-4" />
                   My Account
                 </Link>
               </Button>
             ) : (
-              <Button asChild size="sm" className="ml-4" style={{ backgroundColor: "#C89333", color: "white" }}>
-                <Link href="/admin/login">Sign In</Link>
-              </Button>
+              <div className="flex gap-2 ml-4">
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/auth/login">Sign In</Link>
+                </Button>
+                <Button asChild size="sm" style={{ backgroundColor: "#C89333", color: "white" }}>
+                  <Link href="/auth/signup">Sign Up</Link>
+                </Button>
+              </div>
             )}
           </nav>
 
@@ -160,15 +177,20 @@ export function Header() {
               </Link>
               {isSignedIn ? (
                 <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
-                  <Link href="/admin/dashboard">
+                  <Link href={isAdmin ? "/admin/dashboard" : "/my-applications"}>
                     <User className="mr-2 h-4 w-4" />
                     My Account
                   </Link>
                 </Button>
               ) : (
-                <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
-                  <Link href="/admin/login">Sign In</Link>
-                </Button>
+                <>
+                  <Button asChild size="sm" variant="outline" className="w-full bg-transparent">
+                    <Link href="/auth/login">Sign In</Link>
+                  </Button>
+                  <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
+                    <Link href="/auth/signup">Sign Up</Link>
+                  </Button>
+                </>
               )}
             </div>
           </nav>
