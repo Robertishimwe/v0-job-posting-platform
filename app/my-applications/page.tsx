@@ -25,7 +25,6 @@ export default async function MyApplicationsPage() {
       jobs (
         id,
         title,
-        company,
         location,
         department,
         type,
@@ -98,7 +97,7 @@ export default async function MyApplicationsPage() {
                       <CardDescription className="flex items-center gap-4 text-sm">
                         <span className="flex items-center gap-1">
                           <Briefcase className="h-4 w-4" />
-                          {application.jobs?.company}
+                          {application.jobs?.department}
                         </span>
                         <span className="flex items-center gap-1">
                           <MapPin className="h-4 w-4" />
