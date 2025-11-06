@@ -44,7 +44,6 @@ export default function LoginPage() {
         } else {
           router.push("/my-applications")
         }
-        router.refresh()
       }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Invalid email or password")
