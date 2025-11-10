@@ -105,11 +105,23 @@ export default function LoginPage() {
                   >
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
-                  <div className="text-center text-sm">
-                    Don't have an account?{" "}
-                    <Link href="/auth/signup" className="font-medium" style={{ color: "#C89333" }}>
-                      Sign Up
-                    </Link>
+                  <div className="flex flex-col gap-2 mt-4">
+                    <p className="text-sm text-center">
+                      Don't have an account?{" "}
+                      <Link href="/auth/signup" className="font-medium hover:underline" style={{ color: "#C89333" }}>
+                        Sign Up
+                      </Link>
+                    </p>
+                    <p className="text-sm text-center border-t pt-4">
+                      Are you an organization?{" "}
+                      <Link
+                        href="/organization/login"
+                        className="font-medium hover:underline"
+                        style={{ color: "#C89333" }}
+                      >
+                        Organization Login
+                      </Link>
+                    </p>
                   </div>
                 </div>
               </form>

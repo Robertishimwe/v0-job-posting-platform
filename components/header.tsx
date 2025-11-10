@@ -123,17 +123,9 @@ export function Header() {
                 </Link>
               </Button>
             ) : (
-              <div className="flex gap-2 ml-4">
-                <Button asChild size="sm" variant="outline">
-                  <Link href="/auth/login">Sign In</Link>
-                </Button>
-                <Button asChild size="sm" style={{ backgroundColor: "#C89333", color: "white" }}>
-                  <Link href="/auth/signup">Sign Up</Link>
-                </Button>
-                <Button asChild size="sm" variant="outline" className="hidden lg:inline-flex bg-transparent">
-                  <Link href="/organization/signup">For Organizations</Link>
-                </Button>
-              </div>
+              <Button asChild size="sm" style={{ backgroundColor: "#C89333", color: "white" }}>
+                <Link href="/auth/login">Sign In</Link>
+              </Button>
             )}
           </nav>
 
@@ -193,17 +185,9 @@ export function Header() {
                   </Link>
                 </Button>
               ) : (
-                <>
-                  <Button asChild size="sm" variant="outline" className="w-full bg-transparent">
-                    <Link href="/auth/login">Sign In</Link>
-                  </Button>
-                  <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
-                    <Link href="/auth/signup">Sign Up</Link>
-                  </Button>
-                  <Button asChild size="sm" variant="outline" className="w-full bg-transparent">
-                    <Link href="/organization/signup">For Organizations</Link>
-                  </Button>
-                </>
+                <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
+                  <Link href="/auth/login">Sign In</Link>
+                </Button>
               )}
             </div>
           </nav>
