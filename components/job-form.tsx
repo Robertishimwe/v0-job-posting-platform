@@ -39,6 +39,7 @@ export function JobForm({ job, onSuccess }: JobFormProps) {
       deadline: formData.get("deadline") as string,
       status: formData.get("status") as string,
       posted_date: job ? job.posted_date : new Date().toISOString(),
+      organization_id: localStorage.getItem("organization_id") || undefined,
     }
 
     let error

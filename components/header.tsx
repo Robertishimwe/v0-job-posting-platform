@@ -11,6 +11,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isOrganization, setIsOrganization] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -23,6 +24,13 @@ export function Header() {
       if (user) {
         const { data: adminData } = await supabase.from("admin_users").select("*").eq("id", user.id).single()
         setIsAdmin(!!adminData)
+
+        const { data: organizationData } = await supabase
+          .from("organization_users")
+          .select("*")
+          .eq("id", user.id)
+          .single()
+        setIsOrganization(!!organizationData)
       }
     }
     checkAuth()
@@ -34,8 +42,16 @@ export function Header() {
       if (session?.user) {
         const { data: adminData } = await supabase.from("admin_users").select("*").eq("id", session.user.id).single()
         setIsAdmin(!!adminData)
+
+        const { data: organizationData } = await supabase
+          .from("organization_users")
+          .select("*")
+          .eq("id", session.user.id)
+          .single()
+        setIsOrganization(!!organizationData)
       } else {
         setIsAdmin(false)
+        setIsOrganization(false)
       }
     })
 
@@ -99,7 +115,9 @@ export function Header() {
             </Link>
             {isSignedIn ? (
               <Button asChild size="sm" className="ml-4" style={{ backgroundColor: "#C89333", color: "white" }}>
-                <Link href={isAdmin ? "/admin/dashboard" : "/my-applications"}>
+                <Link
+                  href={isAdmin ? "/admin/dashboard" : isOrganization ? "/organization/dashboard" : "/my-applications"}
+                >
                   <User className="mr-2 h-4 w-4" />
                   My Account
                 </Link>
@@ -111,6 +129,9 @@ export function Header() {
                 </Button>
                 <Button asChild size="sm" style={{ backgroundColor: "#C89333", color: "white" }}>
                   <Link href="/auth/signup">Sign Up</Link>
+                </Button>
+                <Button asChild size="sm" variant="outline" className="hidden lg:inline-flex bg-transparent">
+                  <Link href="/organization/signup">For Organizations</Link>
                 </Button>
               </div>
             )}
@@ -162,7 +183,11 @@ export function Header() {
               </Link>
               {isSignedIn ? (
                 <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
-                  <Link href={isAdmin ? "/admin/dashboard" : "/my-applications"}>
+                  <Link
+                    href={
+                      isAdmin ? "/admin/dashboard" : isOrganization ? "/organization/dashboard" : "/my-applications"
+                    }
+                  >
                     <User className="mr-2 h-4 w-4" />
                     My Account
                   </Link>
@@ -174,6 +199,9 @@ export function Header() {
                   </Button>
                   <Button asChild size="sm" className="w-full" style={{ backgroundColor: "#C89333", color: "white" }}>
                     <Link href="/auth/signup">Sign Up</Link>
+                  </Button>
+                  <Button asChild size="sm" variant="outline" className="w-full bg-transparent">
+                    <Link href="/organization/signup">For Organizations</Link>
                   </Button>
                 </>
               )}

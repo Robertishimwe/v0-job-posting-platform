@@ -11,6 +11,7 @@ export interface Job {
   posted_date: string
   deadline: string | null
   status: string
+  organization_id?: string | null
   created_at: string
   updated_at: string
 }
@@ -31,4 +32,14 @@ export interface Application {
 
 export interface ApplicationWithJob extends Application {
   jobs: Job
+}
+
+export interface Organization {
+  id: string
+  company_name: string
+  contact_person: string
+  email: string
+  status: string
+  created_at: string
+  updated_at: string
 }
