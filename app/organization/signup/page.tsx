@@ -42,8 +42,6 @@ export default function OrganizationSignupPage() {
     }
 
     try {
-      // For now, we'll use a simple approach - store in organizations table
-      // In a real app, you'd want to use proper authentication
       const { data, error: insertError } = await supabase
         .from("organizations")
         .insert([

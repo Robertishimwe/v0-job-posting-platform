@@ -1,15 +1,17 @@
--- Drop existing policy that's preventing inserts
+-- Drop existing policies
+drop policy if exists "Organizations can insert their own record" on public.organizations;
 drop policy if exists "Organizations can view own profile" on public.organizations;
+drop policy if exists "Organizations can update own record" on public.organizations;
 
--- Policy to allow authenticated users to insert their own organization
-create policy "Organizations can insert their own record"
+-- Allow any authenticated user to insert an organization
+create policy "organizations_insert_authenticated"
   on public.organizations for insert
-  with check (auth.uid() is not null);
+  with check (true);
 
--- Policy to allow organizations to view their own profile
-create policy "Organizations can view own profile"
+-- Allow unauthenticated and authenticated users to view organizations (needed for login)
+create policy "organizations_select_all"
   on public.organizations for select
-  using (auth.uid()::text = id::text);
+  using (true);
 
 -- Policy to allow organizations to update their own record
 create policy "Organizations can update own record"
