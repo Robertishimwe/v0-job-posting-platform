@@ -69,7 +69,12 @@ export default function OrganizationDashboardPage() {
         .from("applications")
         .select(
           `
-          *,
+          id,
+          applicant_name,
+          applicant_email,
+          applied_at,
+          status,
+          resume_url,
           jobs (
             id,
             title,

@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, MapPin, Briefcase, Calendar, DollarSign } from "lucide-react"
+import { ArrowLeft, MapPin, Briefcase, Calendar, DollarSign, Building2 } from "lucide-react"
 import type { Job } from "@/lib/types"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 
 interface JobDetailHeaderProps {
-  job: Job
+  job: Job & { organizations?: { id: string; name: string } }
 }
 
 export function JobDetailHeader({ job }: JobDetailHeaderProps) {
@@ -29,8 +29,8 @@ export function JobDetailHeader({ job }: JobDetailHeaderProps) {
 
         <div className="flex items-start gap-6">
           <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled_design-removebg-preview-9H5aRQRAIuCGh47RZNcYBRSMyOTojv.png"
-            alt="Elevate Fin Consult Logo"
+            src="/images/untitled-design-removebg-preview.png"
+            alt="Logo"
             width={80}
             height={80}
             className="object-contain hidden md:block"
@@ -48,6 +48,12 @@ export function JobDetailHeader({ job }: JobDetailHeaderProps) {
               {job.title}
             </h1>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+              {job.organizations?.name && (
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" style={{ color: "#C89333" }} />
+                  <span className="font-medium">{job.organizations.name}</span>
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" style={{ color: "#C89333" }} />
                 <span>{job.location}</span>

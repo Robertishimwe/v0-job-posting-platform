@@ -9,7 +9,20 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: job, error } = await supabase.from("jobs").select("*").eq("id", id).eq("status", "active").single()
+  const { data: job, error } = await supabase
+    .from("jobs")
+    .select(
+      `
+      *,
+      organizations (
+        id,
+        company_name
+      )
+    `,
+    )
+    .eq("id", id)
+    .eq("status", "active")
+    .single()
 
   if (error || !job) {
     notFound()
