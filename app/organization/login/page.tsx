@@ -45,6 +45,7 @@ export default function OrganizationLoginPage() {
       // Store organization ID in session/localStorage for now
       localStorage.setItem("organization_id", orgData.id)
       localStorage.setItem("organization_email", orgData.email)
+      localStorage.setItem("organization_name", orgData.company_name)
       localStorage.setItem("user_type", "organization")
 
       router.push("/organization/dashboard")
@@ -62,7 +63,7 @@ export default function OrganizationLoginPage() {
         <div className="flex flex-col gap-6">
           <div className="flex justify-center mb-4">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled_design-removebg-preview-9H5aRQRAIuCGh47RZNcYBRSMyOTojv.png"
+              src="/images/untitled-design-removebg-preview.png"
               alt="Elevate Fin Consult Logo"
               width={80}
               height={80}
