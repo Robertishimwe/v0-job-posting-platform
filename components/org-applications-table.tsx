@@ -17,8 +17,8 @@ export function OrgApplicationsTable({ applications }: { applications: any[] }) 
 
   const filteredApplications = appsList.filter((app) => {
     const matchesSearch =
-      app.applicant_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.applicant_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.jobs?.title?.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesStatus = statusFilter === "all" || app.status === statusFilter
@@ -45,6 +45,13 @@ export function OrgApplicationsTable({ applications }: { applications: any[] }) 
       default:
         return "#6B7280"
     }
+  }
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A"
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return "N/A"
+    return date.toLocaleDateString()
   }
 
   return (
@@ -87,10 +94,10 @@ export function OrgApplicationsTable({ applications }: { applications: any[] }) 
           <TableBody>
             {filteredApplications.map((app) => (
               <TableRow key={app.id}>
-                <TableCell className="font-medium">{app.applicant_name}</TableCell>
-                <TableCell>{app.applicant_email}</TableCell>
-                <TableCell>{app.jobs?.title}</TableCell>
-                <TableCell>{new Date(app.applied_at).toLocaleDateString()}</TableCell>
+                <TableCell className="font-medium">{app.full_name || "N/A"}</TableCell>
+                <TableCell>{app.email || "N/A"}</TableCell>
+                <TableCell>{app.jobs?.title || "N/A"}</TableCell>
+                <TableCell>{formatDate(app.applied_at)}</TableCell>
                 <TableCell>
                   <Badge style={{ backgroundColor: getStatusColor(app.status), color: "white" }}>{app.status}</Badge>
                 </TableCell>

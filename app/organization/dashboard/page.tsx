@@ -47,7 +47,6 @@ export default function OrganizationDashboardPage() {
       setOrganizationName(name || "Organization")
       setIsAuthenticated(true)
 
-      // Fetch organization's jobs
       const { data: jobsData } = await supabase
         .from("jobs")
         .select(
@@ -55,6 +54,10 @@ export default function OrganizationDashboardPage() {
           *,
           applications (
             id,
+            full_name,
+            email,
+            applied_at,
+            resume_url,
             status
           )
         `,
@@ -64,37 +67,25 @@ export default function OrganizationDashboardPage() {
 
       setJobs(jobsData || [])
 
-      // Fetch organization's applications
-      const { data: applicationsData } = await supabase
-        .from("applications")
-        .select(
-          `
-          id,
-          applicant_name,
-          applicant_email,
-          applied_at,
-          status,
-          resume_url,
-          jobs (
-            id,
-            title,
-            department
-          )
-        `,
-        )
-        .in(
-          "job_id",
-          (jobsData || []).map((j: any) => j.id),
-        )
-        .order("applied_at", { ascending: false })
+      const allApplications: any[] = []
+      ;(jobsData || []).forEach((job: any) => {
+        if (job.applications) {
+          job.applications.forEach((app: any) => {
+            allApplications.push({
+              ...app,
+              jobs: { id: job.id, title: job.title, department: job.department },
+            })
+          })
+        }
+      })
 
-      setApplications(applicationsData || [])
+      setApplications(allApplications)
 
-      // Calculate stats
+      // Calculate stats from collected applications
       const activeJobsCount = (jobsData || []).filter((j: any) => j.status === "active").length
-      const totalApps = applicationsData?.length || 0
-      const shortlisted = applicationsData?.filter((a: any) => a.status === "shortlisted").length || 0
-      const pending = applicationsData?.filter((a: any) => a.status === "pending").length || 0
+      const totalApps = allApplications.length
+      const shortlisted = allApplications.filter((a: any) => a.status === "shortlisted").length
+      const pending = allApplications.filter((a: any) => a.status === "pending").length
 
       setStats({
         activeJobs: activeJobsCount,
@@ -120,6 +111,10 @@ export default function OrganizationDashboardPage() {
           *,
           applications (
             id,
+            full_name,
+            email,
+            applied_at,
+            resume_url,
             status
           )
         `,

@@ -25,7 +25,7 @@ export function OrgViewApplicationsDialog({
     const { error } = await supabase.from("applications").update({ status: newStatus }).eq("id", appId)
 
     if (!error) {
-      setApplications(applications.map((a) => (a.id === appId ? { ...a, status: newStatus } : a)))
+      setApplications(applications.map((a: any) => (a.id === appId ? { ...a, status: newStatus } : a)))
     }
   }
 
@@ -40,6 +40,13 @@ export function OrgViewApplicationsDialog({
       default:
         return "#6B7280"
     }
+  }
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A"
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return "N/A"
+    return date.toLocaleDateString()
   }
 
   return (
@@ -65,11 +72,11 @@ export function OrgViewApplicationsDialog({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {applications.map((app) => (
+              {applications.map((app: any) => (
                 <TableRow key={app.id}>
-                  <TableCell className="font-medium">{app.applicant_name}</TableCell>
-                  <TableCell>{app.applicant_email}</TableCell>
-                  <TableCell>{new Date(app.applied_at).toLocaleDateString()}</TableCell>
+                  <TableCell className="font-medium">{app.full_name || "N/A"}</TableCell>
+                  <TableCell>{app.email || "N/A"}</TableCell>
+                  <TableCell>{formatDate(app.applied_at)}</TableCell>
                   <TableCell>
                     <Badge style={{ backgroundColor: getStatusColor(app.status), color: "white" }}>{app.status}</Badge>
                   </TableCell>
