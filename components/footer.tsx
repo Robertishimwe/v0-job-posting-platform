@@ -65,7 +65,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-gray-300">
                 <Mail className="h-4 w-4 flex-shrink-0" style={{ color: "#E6A940" }} />
-                <span>careers@elevatefinconsult.com</span>
+                <span>info@elevatefinconsult.com</span>
               </li>
             </ul>
           </div>

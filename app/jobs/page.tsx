@@ -19,16 +19,18 @@ export default async function JobsPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 py-12 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-balance" style={{ color: "#1A0D66" }}>
-            Browse All Jobs
-          </h1>
-          <p className="text-lg text-muted-foreground text-pretty">
-            Find your next career opportunity from our partner companies
-          </p>
+      <main className="flex-1 py-12 px-4 md:px-8 lg:px-12 w-full">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-4 text-balance" style={{ color: "#1A0D66" }}>
+              Browse All Jobs
+            </h1>
+            <p className="text-lg text-muted-foreground text-pretty">
+              Find your next career opportunity from our partner companies
+            </p>
+          </div>
+          <JobsBrowser jobs={jobs || []} />
         </div>
-        <JobsBrowser jobs={jobs || []} />
       </main>
       <Footer />
     </div>

@@ -28,7 +28,7 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
   const [locationFilter, setLocationFilter] = useState("all")
   const [sortBy, setSortBy] = useState("date-desc")
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 9
+  const itemsPerPage = 12
 
   // Get unique values for filters
   const departments = useMemo(() => Array.from(new Set(jobs.map((job) => job.department))), [jobs])
@@ -79,9 +79,8 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Search and Filters */}
-      <div className="bg-white p-6 rounded-lg border space-y-4">
+    <div className="space-y-8">
+      <div className="bg-white p-6 md:p-8 rounded-xl border shadow-sm space-y-6">
         <div className="flex items-center gap-2 mb-4">
           <SlidersHorizontal className="h-5 w-5" style={{ color: "#C89333" }} />
           <h2 className="text-lg font-semibold" style={{ color: "#1A0D66" }}>
@@ -91,7 +90,7 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search by title, department, or location..."
             value={searchQuery}
@@ -99,12 +98,11 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
               setSearchQuery(e.target.value)
               setCurrentPage(1)
             }}
-            className="pl-10"
+            className="pl-12 h-12 text-base"
           />
         </div>
 
-        {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Select
             value={departmentFilter}
             onValueChange={(value) => {
@@ -112,7 +110,7 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
               setCurrentPage(1)
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="h-11">
               <SelectValue placeholder="Department" />
             </SelectTrigger>
             <SelectContent>
@@ -132,7 +130,7 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
               setCurrentPage(1)
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="h-11">
               <SelectValue placeholder="Job Type" />
             </SelectTrigger>
             <SelectContent>
@@ -152,7 +150,7 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
               setCurrentPage(1)
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="h-11">
               <SelectValue placeholder="Location" />
             </SelectTrigger>
             <SelectContent>
@@ -166,7 +164,7 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
           </Select>
 
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger>
+            <SelectTrigger className="h-11">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -179,15 +177,14 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
         </div>
 
         {/* Results count */}
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground pt-2">
           Showing {paginatedJobs.length} of {filteredAndSortedJobs.length} jobs
         </div>
       </div>
 
-      {/* Jobs Grid */}
       {paginatedJobs.length > 0 ? (
         <>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {paginatedJobs.map((job) => (
               <JobCard key={job.id} job={job} />
             ))}
@@ -195,7 +192,7 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <Pagination>
+            <Pagination className="mt-8">
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
@@ -238,8 +235,8 @@ export function JobsBrowser({ jobs }: JobsBrowserProps) {
           )}
         </>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg border">
-          <p className="text-muted-foreground">No jobs found matching your criteria.</p>
+        <div className="text-center py-16 bg-white rounded-xl border shadow-sm">
+          <p className="text-muted-foreground text-lg">No jobs found matching your criteria.</p>
           <Button
             variant="outline"
             onClick={() => {
