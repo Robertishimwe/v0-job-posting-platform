@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar, MapPin, Briefcase, FileText, LogOut } from "lucide-react"
+import { Calendar, MapPin, Briefcase, FileText, LogOut, Building2 } from "lucide-react"
 import Link from "next/link"
 
 export default async function MyApplicationsPage() {
@@ -28,7 +28,11 @@ export default async function MyApplicationsPage() {
         location,
         department,
         type,
-        posted_date
+        posted_date,
+        organizations (
+          id,
+          company_name
+        )
       )
     `,
     )
@@ -94,7 +98,13 @@ export default async function MyApplicationsPage() {
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <CardTitle style={{ color: "#1A0D66" }}>{application.jobs?.title}</CardTitle>
-                      <CardDescription className="flex items-center gap-4 text-sm">
+                      <CardDescription className="flex items-center gap-4 text-sm flex-wrap">
+                        {application.jobs?.organizations?.company_name && (
+                          <span className="flex items-center gap-1 font-medium" style={{ color: "#C89333" }}>
+                            <Building2 className="h-4 w-4" />
+                            {application.jobs.organizations.company_name}
+                          </span>
+                        )}
                         <span className="flex items-center gap-1">
                           <Briefcase className="h-4 w-4" />
                           {application.jobs?.department}

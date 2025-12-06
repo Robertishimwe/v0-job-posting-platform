@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 
 interface JobDetailHeaderProps {
-  job: Job & { organizations?: { id: string; name: string } }
+  job: Job & { organizations?: { id: string; company_name: string } }
 }
 
 export function JobDetailHeader({ job }: JobDetailHeaderProps) {
@@ -48,10 +48,10 @@ export function JobDetailHeader({ job }: JobDetailHeaderProps) {
               {job.title}
             </h1>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-              {job.organizations?.name && (
+              {job.organizations?.company_name && (
                 <div className="flex items-center gap-2">
                   <Building2 className="h-4 w-4" style={{ color: "#C89333" }} />
-                  <span className="font-medium">{job.organizations.name}</span>
+                  <span className="font-medium">{job.organizations.company_name}</span>
                 </div>
               )}
               <div className="flex items-center gap-2">
