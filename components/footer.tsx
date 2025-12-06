@@ -1,8 +1,26 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Mail, Phone, MapPin } from "lucide-react"
+import { createClient } from "@/lib/supabase/server"
 
-export function Footer() {
+export async function Footer() {
+  const supabase = await createClient()
+
+  // Fetch site settings
+  const { data: settings } = await supabase.from("site_settings").select("key, value")
+
+  // Convert to object for easy access
+  const siteSettings: Record<string, string> = {}
+  settings?.forEach((s) => {
+    siteSettings[s.key] = s.value
+  })
+
+  // Use settings or fallback to defaults
+  const contactEmail = siteSettings.contact_email || "info@elevatefinconsult.com"
+  const contactPhone = siteSettings.contact_phone || "+250 XXX XXX XXX"
+  const contactLocation = siteSettings.contact_location || "Kigali, Rwanda"
+  const consultingUrl = siteSettings.consulting_website_url || "https://www.elevatefinconsult.com"
+
   return (
     <footer className="border-t" style={{ backgroundColor: "#1A0D66", borderColor: "#0F0A4A" }}>
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12">
@@ -36,11 +54,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="https://blob.v0.app/p04OB.html"
-                  target="_blank"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
+                <Link href={consultingUrl} target="_blank" className="text-gray-300 hover:text-white transition-colors">
                   Consulting Services
                 </Link>
               </li>
@@ -57,15 +71,15 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-gray-300">
                 <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: "#E6A940" }} />
-                <span>Kigali, Rwanda</span>
+                <span>{contactLocation}</span>
               </li>
               <li className="flex items-center gap-2 text-gray-300">
                 <Phone className="h-4 w-4 flex-shrink-0" style={{ color: "#E6A940" }} />
-                <span>+250 XXX XXX XXX</span>
+                <span>{contactPhone}</span>
               </li>
               <li className="flex items-center gap-2 text-gray-300">
                 <Mail className="h-4 w-4 flex-shrink-0" style={{ color: "#E6A940" }} />
-                <span>info@elevatefinconsult.com</span>
+                <span>{contactEmail}</span>
               </li>
             </ul>
           </div>

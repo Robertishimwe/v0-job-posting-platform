@@ -5,6 +5,7 @@ import { AdminSystemStats } from "@/components/admin-system-stats"
 import { AdminOrganizationsTable } from "@/components/admin-organizations-table"
 import { AdminUsersTable } from "@/components/admin-users-table"
 import { AdminAnalytics } from "@/components/admin-analytics"
+import { AdminSiteSettings } from "@/components/admin-site-settings"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default async function AdminDashboardPage() {
@@ -178,6 +179,8 @@ export default async function AdminDashboardPage() {
     topOrganizations,
   }
 
+  const { data: siteSettings } = await supabase.from("site_settings").select("*")
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F8F9FA" }}>
       <AdminHeader user={adminData} />
@@ -200,10 +203,11 @@ export default async function AdminDashboardPage() {
 
         <div className="mt-8">
           <Tabs defaultValue="organizations" className="w-full">
-            <TabsList className="grid w-full max-w-lg grid-cols-3">
+            <TabsList className="grid w-full max-w-2xl grid-cols-4">
               <TabsTrigger value="organizations">Organizations</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="organizations" className="mt-6">
               <AdminOrganizationsTable organizations={orgsWithCounts} />
@@ -213,6 +217,9 @@ export default async function AdminDashboardPage() {
             </TabsContent>
             <TabsContent value="analytics" className="mt-6">
               <AdminAnalytics data={analyticsData} />
+            </TabsContent>
+            <TabsContent value="settings" className="mt-6">
+              <AdminSiteSettings initialSettings={siteSettings || []} />
             </TabsContent>
           </Tabs>
         </div>
