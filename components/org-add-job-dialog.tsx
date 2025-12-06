@@ -41,6 +41,12 @@ export function OrgAddJobDialog({
     try {
       const organizationId = localStorage.getItem("organization_id")
 
+      console.log("[v0] Submitting job with organization_id:", organizationId)
+
+      if (!organizationId) {
+        throw new Error("Organization not found. Please log in again.")
+      }
+
       const { error } = await supabase.from("jobs").insert([
         {
           ...formData,
@@ -68,6 +74,7 @@ export function OrgAddJobDialog({
       onJobAdded()
     } catch (error) {
       console.error("Error posting job:", error)
+      alert(`Failed to post job: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
       setIsLoading(false)
     }
