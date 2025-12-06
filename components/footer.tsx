@@ -10,7 +10,7 @@ export function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <Image
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled_design-removebg-preview-9H5aRQRAIuCGh47RZNcYBRSMyOTojv.png"
+                src="/images/untitled-design-removebg-preview.png"
                 alt="Elevate Fin Consult Logo"
                 width={50}
                 height={50}
@@ -65,7 +65,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-gray-300">
                 <Mail className="h-4 w-4 flex-shrink-0" style={{ color: "#E6A940" }} />
-                <span>careers@elevatefin.com</span>
+                <span>careers@elevatefinconsult.com</span>
               </li>
             </ul>
           </div>

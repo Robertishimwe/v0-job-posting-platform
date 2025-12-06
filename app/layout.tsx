@@ -12,6 +12,19 @@ export const metadata: Metadata = {
   description:
     "Join Rwanda's leading financial consulting firm. Explore career opportunities and build your future with Elevate Fin Consult.",
   generator: "v0.app",
+  metadataBase: new URL("https://www.elevatefinconsult.com"),
+  icons: {
+    icon: [{ url: "/images/untitled-design-removebg-preview.png", type: "image/png" }],
+    apple: "/images/untitled-design-removebg-preview.png",
+  },
+  openGraph: {
+    title: "Careers - Elevate Fin Consult",
+    description:
+      "Join Rwanda's leading financial consulting firm. Explore career opportunities and build your future with Elevate Fin Consult.",
+    url: "https://www.elevatefinconsult.com",
+    siteName: "Elevate Fin Consult Careers",
+    type: "website",
+  },
 }
 
 export default function RootLayout({

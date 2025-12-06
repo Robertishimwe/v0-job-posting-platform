@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
         <div className="flex flex-col gap-6">
           <div className="flex justify-center mb-4">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled_design-removebg-preview-9H5aRQRAIuCGh47RZNcYBRSMyOTojv.png"
+              src="/images/untitled-design-removebg-preview.png"
               alt="Elevate Fin Consult Logo"
               width={80}
               height={80}
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="admin@elevatefin.com"
+                      placeholder="admin@elevatefinconsult.com"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
