@@ -35,8 +35,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const jobTitle = job.title
   const description =
     job.description?.substring(0, 155) ||
-    `${jobTitle} position at ${companyName}. Apply now through Elevate Fin Consult's job portal.`
+    `${jobTitle} position at ${companyName}. ${job.type} role in ${job.location}. Apply now!`
   const url = `https://www.elevatefinconsult.com/jobs/${id}`
+
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(jobTitle)}&company=${encodeURIComponent(companyName)}&location=${encodeURIComponent(job.location)}&type=${encodeURIComponent(job.type)}`
 
   return {
     title: `${jobTitle} at ${companyName} | Elevate Fin Consult`,
@@ -51,19 +53,26 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       "career opportunity",
       "Rwanda jobs",
       "Kigali jobs",
+      "financial consulting",
+      "recruitment",
     ],
+    authors: [{ name: "Elevate Fin Consult" }],
+    creator: "Elevate Fin Consult",
+    publisher: "Elevate Fin Consult",
     openGraph: {
       title: `${jobTitle} at ${companyName}`,
       description,
       url,
       siteName: "Elevate Fin Consult Careers",
       type: "website",
+      locale: "en_US",
       images: [
         {
-          url: "https://www.elevatefinconsult.com/images/untitled-design-removebg-preview.png",
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `${jobTitle} at ${companyName}`,
+          alt: `${jobTitle} at ${companyName} - ${job.location}`,
+          type: "image/png",
         },
       ],
     },
@@ -71,10 +80,22 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       card: "summary_large_image",
       title: `${jobTitle} at ${companyName}`,
       description,
-      images: ["https://www.elevatefinconsult.com/images/untitled-design-removebg-preview.png"],
+      images: [ogImageUrl],
+      site: "@elevatefinconsult",
+      creator: "@elevatefinconsult",
     },
     alternates: {
       canonical: url,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   }
 }
