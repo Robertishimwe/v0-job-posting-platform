@@ -4,6 +4,80 @@ import { JobDetailHeader } from "@/components/job-detail-header"
 import { JobDetailContent } from "@/components/job-detail-content"
 import { ApplicationForm } from "@/components/application-form"
 import { Footer } from "@/components/footer"
+import type { Metadata } from "next"
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: job } = await supabase
+    .from("jobs")
+    .select(
+      `
+      *,
+      organizations (
+        id,
+        company_name
+      )
+    `,
+    )
+    .eq("id", id)
+    .eq("status", "active")
+    .single()
+
+  if (!job) {
+    return {
+      title: "Job Not Found",
+    }
+  }
+
+  const companyName = job.organizations?.company_name || "Elevate Fin Consult"
+  const jobTitle = job.title
+  const description =
+    job.description?.substring(0, 155) ||
+    `${jobTitle} position at ${companyName}. Apply now through Elevate Fin Consult's job portal.`
+  const url = `https://www.elevatefinconsult.com/jobs/${id}`
+
+  return {
+    title: `${jobTitle} at ${companyName} | Elevate Fin Consult`,
+    description,
+    keywords: [
+      jobTitle,
+      companyName,
+      job.department,
+      job.location,
+      job.type,
+      "job opening",
+      "career opportunity",
+      "Rwanda jobs",
+      "Kigali jobs",
+    ],
+    openGraph: {
+      title: `${jobTitle} at ${companyName}`,
+      description,
+      url,
+      siteName: "Elevate Fin Consult Careers",
+      type: "website",
+      images: [
+        {
+          url: "https://www.elevatefinconsult.com/images/untitled-design-removebg-preview.png",
+          width: 1200,
+          height: 630,
+          alt: `${jobTitle} at ${companyName}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${jobTitle} at ${companyName}`,
+      description,
+      images: ["https://www.elevatefinconsult.com/images/untitled-design-removebg-preview.png"],
+    },
+    alternates: {
+      canonical: url,
+    },
+  }
+}
 
 export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -28,22 +102,59 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
     notFound()
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.title,
+    description: job.description,
+    datePosted: job.posted_date,
+    validThrough: job.deadline,
+    employmentType: job.type?.toUpperCase().replace("-", "_"),
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.organizations?.company_name || "Elevate Fin Consult",
+      sameAs: "https://www.elevatefinconsult.com",
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: job.location,
+        addressCountry: "RW",
+      },
+    },
+    baseSalary: job.salary_range
+      ? {
+          "@type": "MonetaryAmount",
+          currency: "RWF",
+          value: {
+            "@type": "QuantitativeValue",
+            value: job.salary_range,
+            unitText: "YEAR",
+          },
+        }
+      : undefined,
+  }
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <JobDetailHeader job={job} />
-      <main className="flex-1 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <JobDetailContent job={job} />
-          </div>
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <ApplicationForm jobId={job.id} jobTitle={job.title} />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <div className="min-h-screen flex flex-col">
+        <JobDetailHeader job={job} />
+        <main className="flex-1 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12">
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <JobDetailContent job={job} />
+            </div>
+            <div className="lg:col-span-1">
+              <div className="sticky top-8">
+                <ApplicationForm jobId={job.id} jobTitle={job.title} />
+              </div>
             </div>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+        </main>
+        <Footer />
+      </div>
+    </>
   )
 }

@@ -11,6 +11,47 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Elevate Fin Consult | Rwanda's Leading Career Portal for Financial Services",
+  description:
+    "Rwanda's premier job portal connecting top talent with leading financial consulting firms. Find your next career opportunity with Elevate Fin Consult.",
+  keywords: [
+    "Rwanda jobs",
+    "Kigali careers",
+    "financial consulting",
+    "job opportunities Rwanda",
+    "Elevate Fin Consult",
+    "career portal",
+    "employment Rwanda",
+  ],
+  openGraph: {
+    title: "Elevate Fin Consult | Rwanda's Leading Career Portal",
+    description:
+      "Rwanda's premier job portal connecting top talent with leading financial consulting firms. Find your next career opportunity.",
+    url: "https://www.elevatefinconsult.com",
+    type: "website",
+    images: [
+      {
+        url: "https://www.elevatefinconsult.com/images/untitled-design-removebg-preview.png",
+        width: 1200,
+        height: 630,
+        alt: "Elevate Fin Consult",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Elevate Fin Consult | Rwanda's Leading Career Portal",
+    description:
+      "Rwanda's premier job portal connecting top talent with leading financial consulting firms. Find your next career opportunity.",
+    images: ["https://www.elevatefinconsult.com/images/untitled-design-removebg-preview.png"],
+  },
+  alternates: {
+    canonical: "https://www.elevatefinconsult.com",
+  },
+}
 
 export default async function HomePage() {
   const supabase = await createClient()
