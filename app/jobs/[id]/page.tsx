@@ -130,30 +130,49 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
     description: job.description,
     datePosted: job.posted_date,
     validThrough: job.deadline,
-    employmentType: job.type?.toUpperCase().replace("-", "_"),
+    employmentType: job.type?.toUpperCase().replace("-", "_") || "FULL_TIME",
     hiringOrganization: {
       "@type": "Organization",
       name: job.organizations?.company_name || "Elevate Fin Consult",
       sameAs: "https://www.elevatefinconsult.com",
+      logo: "https://www.elevatefinconsult.com/logo.png",
     },
     jobLocation: {
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
-        addressLocality: job.location,
+        streetAddress: "KN 67 St",
+        addressLocality: job.location || "Kigali",
+        addressRegion: "Kigali",
+        postalCode: "00000",
         addressCountry: "RW",
       },
     },
-    baseSalary: job.salary_range
-      ? {
-          "@type": "MonetaryAmount",
-          currency: "RWF",
-          value: {
-            "@type": "QuantitativeValue",
-            value: job.salary_range,
-            unitText: "YEAR",
+    ...(job.salary_range && {
+      baseSalary: {
+        "@type": "MonetaryAmount",
+        currency: "RWF",
+        value: {
+          "@type": "QuantitativeValue",
+          minValue: job.salary_range.split("-")[0]?.trim() || job.salary_range,
+          maxValue: job.salary_range.split("-")[1]?.trim() || job.salary_range,
+          unitText: "YEAR",
+        },
+      },
+    }),
+    jobBenefits: job.responsibilities
+      ? [
+          {
+            "@type": "Thing",
+            name: "Professional growth opportunities",
           },
-        }
+        ]
+      : undefined,
+    skills: job.requirements
+      ? job.requirements.split("\n").map((req: string) => ({
+          "@type": "Thing",
+          name: req.trim(),
+        }))
       : undefined,
   }
 

@@ -35,8 +35,12 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL("https://www.elevatefinconsult.com"),
   icons: {
-    icon: [{ url: "/images/untitled-design-removebg-preview.png", type: "image/png" }],
-    apple: "/images/untitled-design-removebg-preview.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/images/favicon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/images/favicon-512x512.jpg", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/images/favicon-192x192.png",
   },
   openGraph: {
     title: "Careers - Elevate Fin Consult",
