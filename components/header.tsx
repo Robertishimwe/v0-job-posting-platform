@@ -22,15 +22,27 @@ export function Header() {
       setIsSignedIn(!!user)
 
       if (user) {
-        const { data: adminData } = await supabase.from("admin_users").select("*").eq("id", user.id).single()
-        setIsAdmin(!!adminData)
+        try {
+          const { data: adminData, error: adminError } = await supabase
+            .from("admin_users")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle()
+          setIsAdmin(!!adminData && !adminError)
+        } catch {
+          setIsAdmin(false)
+        }
 
-        const { data: organizationData } = await supabase
-          .from("organization_users")
-          .select("*")
-          .eq("id", user.id)
-          .single()
-        setIsOrganization(!!organizationData)
+        try {
+          const { data: orgData, error: orgError } = await supabase
+            .from("organizations")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle()
+          setIsOrganization(!!orgData && !orgError)
+        } catch {
+          setIsOrganization(false)
+        }
       }
     }
     checkAuth()
@@ -40,15 +52,27 @@ export function Header() {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setIsSignedIn(!!session)
       if (session?.user) {
-        const { data: adminData } = await supabase.from("admin_users").select("*").eq("id", session.user.id).single()
-        setIsAdmin(!!adminData)
+        try {
+          const { data: adminData, error: adminError } = await supabase
+            .from("admin_users")
+            .select("*")
+            .eq("id", session.user.id)
+            .maybeSingle()
+          setIsAdmin(!!adminData && !adminError)
+        } catch {
+          setIsAdmin(false)
+        }
 
-        const { data: organizationData } = await supabase
-          .from("organization_users")
-          .select("*")
-          .eq("id", session.user.id)
-          .single()
-        setIsOrganization(!!organizationData)
+        try {
+          const { data: orgData, error: orgError } = await supabase
+            .from("organizations")
+            .select("*")
+            .eq("id", session.user.id)
+            .maybeSingle()
+          setIsOrganization(!!orgData && !orgError)
+        } catch {
+          setIsOrganization(false)
+        }
       } else {
         setIsAdmin(false)
         setIsOrganization(false)
