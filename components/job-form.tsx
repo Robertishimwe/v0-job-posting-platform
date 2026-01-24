@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { RichTextEditor } from "@/components/rich-text-editor"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 
@@ -19,6 +20,9 @@ interface JobFormProps {
 
 export function JobForm({ job, onSuccess }: JobFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [description, setDescription] = useState(job?.description || "")
+  const [requirements, setRequirements] = useState(job?.requirements || "")
+  const [responsibilities, setResponsibilities] = useState(job?.responsibilities || "")
   const router = useRouter()
   const supabase = createClient()
 
@@ -32,9 +36,9 @@ export function JobForm({ job, onSuccess }: JobFormProps) {
       department: formData.get("department") as string,
       location: formData.get("location") as string,
       type: formData.get("type") as string,
-      description: formData.get("description") as string,
-      requirements: formData.get("requirements") as string,
-      responsibilities: formData.get("responsibilities") as string,
+      description,
+      requirements,
+      responsibilities,
       salary_range: formData.get("salary_range") as string,
       deadline: formData.get("deadline") as string,
       status: formData.get("status") as string,
@@ -123,41 +127,29 @@ export function JobForm({ job, onSuccess }: JobFormProps) {
         </Select>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">Job Description *</Label>
-        <Textarea
-          id="description"
-          name="description"
-          defaultValue={job?.description}
-          rows={4}
-          required
-          placeholder="Provide a detailed description of the role..."
-        />
-      </div>
+      <RichTextEditor
+        value={description}
+        onChange={setDescription}
+        label="Job Description"
+        placeholder="Provide a detailed description of the role..."
+        required
+      />
 
-      <div className="space-y-2">
-        <Label htmlFor="requirements">Requirements *</Label>
-        <Textarea
-          id="requirements"
-          name="requirements"
-          defaultValue={job?.requirements}
-          rows={4}
-          required
-          placeholder="List the required qualifications and skills..."
-        />
-      </div>
+      <RichTextEditor
+        value={requirements}
+        onChange={setRequirements}
+        label="Requirements"
+        placeholder="List the required qualifications and skills..."
+        required
+      />
 
-      <div className="space-y-2">
-        <Label htmlFor="responsibilities">Responsibilities *</Label>
-        <Textarea
-          id="responsibilities"
-          name="responsibilities"
-          defaultValue={job?.responsibilities}
-          rows={4}
-          required
-          placeholder="Describe the key responsibilities..."
-        />
-      </div>
+      <RichTextEditor
+        value={responsibilities}
+        onChange={setResponsibilities}
+        label="Responsibilities"
+        placeholder="Describe the key responsibilities..."
+        required
+      />
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onSuccess} disabled={isSubmitting}>

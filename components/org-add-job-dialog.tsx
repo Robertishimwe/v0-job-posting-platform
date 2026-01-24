@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { RichTextEditor } from "@/components/rich-text-editor"
 import { createClient } from "@/lib/supabase/client"
 
 export function OrgAddJobDialog({
@@ -136,36 +137,27 @@ export function OrgAddJobDialog({
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="description">Job Description *</Label>
-            <Textarea
-              id="description"
-              required
-              rows={3}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
+          <RichTextEditor
+            value={formData.description}
+            onChange={(value) => setFormData({ ...formData, description: value })}
+            label="Job Description"
+            placeholder="Provide a detailed description of the role..."
+            required
+          />
 
-          <div>
-            <Label htmlFor="requirements">Requirements</Label>
-            <Textarea
-              id="requirements"
-              rows={2}
-              value={formData.requirements}
-              onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-            />
-          </div>
+          <RichTextEditor
+            value={formData.requirements}
+            onChange={(value) => setFormData({ ...formData, requirements: value })}
+            label="Requirements"
+            placeholder="List the required qualifications and skills..."
+          />
 
-          <div>
-            <Label htmlFor="responsibilities">Responsibilities</Label>
-            <Textarea
-              id="responsibilities"
-              rows={2}
-              value={formData.responsibilities}
-              onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
-            />
-          </div>
+          <RichTextEditor
+            value={formData.responsibilities}
+            onChange={(value) => setFormData({ ...formData, responsibilities: value })}
+            label="Responsibilities"
+            placeholder="Describe the key responsibilities..."
+          />
 
           <div className="grid grid-cols-2 gap-4">
             <div>

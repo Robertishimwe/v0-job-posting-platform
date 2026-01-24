@@ -13,7 +13,10 @@ export function JobDetailContent({ job }: JobDetailContentProps) {
           <CardTitle style={{ color: "#1A0D66" }}>About the Role</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{job.description}</p>
+          <div
+            className="prose prose-sm max-w-none text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: job.description || "" }}
+          />
         </CardContent>
       </Card>
 
@@ -22,9 +25,10 @@ export function JobDetailContent({ job }: JobDetailContentProps) {
           <CardTitle style={{ color: "#1A0D66" }}>Key Responsibilities</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose prose-sm max-w-none">
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{job.responsibilities}</p>
-          </div>
+          <div
+            className="prose prose-sm max-w-none text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: job.responsibilities || "" }}
+          />
         </CardContent>
       </Card>
 
@@ -33,9 +37,10 @@ export function JobDetailContent({ job }: JobDetailContentProps) {
           <CardTitle style={{ color: "#1A0D66" }}>Requirements</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose prose-sm max-w-none">
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{job.requirements}</p>
-          </div>
+          <div
+            className="prose prose-sm max-w-none text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: job.requirements || "" }}
+          />
         </CardContent>
       </Card>
 
